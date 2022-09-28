@@ -1,4 +1,3 @@
-    # coding=utf-8
 """
 This file is your main submission that will be graded against. Only copy-paste
 code on the relevant classes included here. Do not add any classes or functions
@@ -9,7 +8,7 @@ import heapq
 import sys
 
 
-from util import generate_graph
+from util1 import generate_graph
 
 max_possible_value = sys.maxsize
 
@@ -17,17 +16,13 @@ max_possible_value = sys.maxsize
 class PriorityQueue(object):
     """
     A queue structure where each element is served in order of priority.
-
     Elements in the queue are popped based on the priority with higher priority
     elements being served before lower priority elements.  If two elements have
     the same priority, they will be served in the order they were added to the
     queue.
-
     Traditionally priority queues are implemented with heaps, but there are any
     number of implementation options.
-
     (Hint: take a look at the module heapq)
-
     Attributes:
         queue (list): Nodes added to the priority queue.
     """
@@ -40,7 +35,6 @@ class PriorityQueue(object):
     def pop(self):
         """
         Pop top priority node from queue.
-
         Returns:
             The node with the highest priority.
         """
@@ -49,11 +43,9 @@ class PriorityQueue(object):
     def remove(self, node_id):
         """
         Remove a node from the queue.
-
         This is a hint, you might require this in ucs,
         however, if you choose not to use it, you are free to
         define your own method and not use it.
-
         Args:
             node_id (int): Index of node in queue.
         """
@@ -73,7 +65,6 @@ class PriorityQueue(object):
     def append(self, node):
         """
         Append a node to the queue.
-
         Args:
             node: Comparable Object to be added to the priority queue.
         """
@@ -82,10 +73,8 @@ class PriorityQueue(object):
     def __contains__(self, key):
         """
         Containment Check operator for 'in'
-
         Args:
             key: The key to check for in the queue.
-
         Returns:
             True if key is found in queue, False otherwise.
         """
@@ -95,10 +84,8 @@ class PriorityQueue(object):
     def __eq__(self, other):
         """
         Compare this Priority Queue with another Priority Queue.
-
         Args:
             other (PriorityQueue): Priority Queue to compare against.
-
         Returns:
             True if the two priority queues are equivalent.
         """
@@ -108,7 +95,6 @@ class PriorityQueue(object):
     def size(self):
         """
         Get the current size of the queue.
-
         Returns:
             Integer of number of items in queue.
         """
@@ -123,7 +109,6 @@ class PriorityQueue(object):
     def top(self):
         """
         Get the top item in the queue.
-
         Returns:
             The first item stored in teh queue.
         """
@@ -200,14 +185,14 @@ def astar_search(graph, start, goal):
         return path, explored_nodes
 
     path.append(start)
-    path_cost = get_manhattan_heuristic(start, goal)
+    path_cost = get_geographi0cal_heuristics(start, goal)
     # Priority Queue to keep sorted distance travelled till now
     frontier = [(path_cost, path)]
     while len(frontier) > 0:
         # pop a node from the queue
         path_cost_till_now, path_till_now = pop_frontier(frontier)
         current_node = path_till_now[-1]
-        path_cost_till_now = path_cost_till_now - get_manhattan_heuristic(current_node, goal)
+        path_cost_till_now = path_cost_till_now - get_geographi0cal_heuristics(current_node, goal)
         explored_nodes.append(current_node)
         # test goal condition
         if current_node == goal:
@@ -225,7 +210,7 @@ def astar_search(graph, start, goal):
 
             # extra_cost = graph.get_edge_weight(current_node, neighbour)
             extra_cost = 1
-            neighbour_cost = extra_cost + path_cost_till_now + get_manhattan_heuristic(neighbour, goal)
+            neighbour_cost = extra_cost + path_cost_till_now + get_geographi0cal_heuristics(neighbour, goal)
             new_element = (neighbour_cost, path_to_neighbour)
 
             is_there, indexx, neighbour_old_cost, _ = get_frontier_params_new(neighbour, frontier)
@@ -284,39 +269,38 @@ def get_frontier_params(node, frontier):
     return False, None, None, None
 
 
-def get_manhattan_heuristic(node, goal):
-    i, j = divmod(int(node), 8)
-    i_goal, j_goal = divmod(int(goal), 8)
-    i_delta = abs(i - i_goal)
-    j_delta = abs(j - j_goal)
 
-    manhattan_dist = i_delta + j_delta
-    return manhattan_dist
-
-
+def get_geographi0cal_heuristics(node,goal):
+    i, j = divmod(int(node), 4)
+    i_goal, j_goal = divmod(int(goal), 4)
+    i_delta = abs(i - i_goal)**2
+    j_delta = abs(j - j_goal)**2
+    geograhical_dist = (i_delta + j_delta)**0.5
+    return geograhical_dist
 if __name__ == '__main__':
     graph_neighbours = generate_graph()
+    
 
-    #print("============ UCS Search ================")
-    #path_ucs, explored_ucs = uniform_cost_search(graph_neighbours, '0', '61')
-    #rint("Path UCS:", path_ucs)
+    print("============ UCS Search ================")
+    path_ucs, explored_ucs = uniform_cost_search(graph_neighbours, '0', '61')
+    print("Path UCS:", path_ucs)
     # print("Explored Nodes UCS: ", explored_ucs)
-    #print(len(explored_ucs))
-    #print()
+    print(len(explored_ucs))
+    print()
 
     print("============ AStar Search ================")
-    path_astar, explored_astar = astar_search(graph_neighbours, '0', '27')
+    path_astar, explored_astar = astar_search(graph_neighbours, '0', '61')
     print("Path_astar:", path_astar)
     print("Explored Nodes A Star: ", explored_astar)
     print(len(explored_astar))
     print()
 
-    #print("============ Bottleneck Astar Search ================")
-    #path_1, explored_1 = astar_search(graph_neighbours, '0', '27')
-    #path_2, explored_2 = astar_search(graph_neighbours, '35', '61')
-    #print("Path1:", path_1)
-    #print("Path_2:", path_2)
+    print("============ Bottleneck Astar Search ================")
+    path_1, explored_1 = astar_search(graph_neighbours, '0', '27')
+    path_2, explored_2 = astar_search(graph_neighbours, '35', '61')
+    print("Path1:", path_1)
+    print("Path_2:", path_2)
 
-    #print("Explored Nodes1: ", explored_1)
-    #print("Explored Nodes2: ", explored_2)
-    #print(len(explored_1) + len(explored_2))
+    print("Explored Nodes1: ", explored_1)
+    print("Explored Nodes2: ", explored_2)
+    print(len(explored_1) + len(explored_2))
